@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Python Problem Solver</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #editorContainer {
+      height: 300px;
+      border: 1px solid #444;
+      border-radius: 0.5rem;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen font-mono p-6">
+  <div class="max-w-5xl mx-auto">
+    <h1 class="text-3xl font-bold text-cyan-400 text-center mb-6">🤖 AIChallenge Solver</h1>
+
+    <div class="bg-gray-800 p-4 rounded-lg mb-6">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-lg text-indigo-300 font-semibold">📘 Current Problem</h2>
+        <select id="levelSelector"
+          class="text-sm px-2 py-1 rounded focus:outline-none text-black transition-colors duration-300">
+          <option value="basic" class="text-green-500">🟢 Basic</option>
+          <option value="intermediate" class="text-yellow-400">🟡 Intermediate</option>
+          <option value="advanced" class="text-red-500">🔴 Advanced</option>
+        </select>
+
+      </div>
+      <div id="problemBox" class="text-white whitespace-pre-wrap">Waiting for topic input...</div>
+    </div>
+
+    <form id="codeForm" class="bg-gray-800 p-4 rounded-lg shadow">
+      <div id="editorContainer"></div>
+
+      <div class="flex justify-between mt-4 flex-wrap gap-2">
+        <div class="flex gap-2">
+          <button type="button" id="nextBtn"
+            class="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold py-2 px-5 rounded-md">🆕 Next Problem</button>
+          <button type="button" id="changeTopicBtn"
+            class="bg-purple-500 hover:bg-purple-400 text-white font-semibold py-2 px-5 rounded-md">🔄 Change Topic</button>
+          <button type="button" id="solutionBtn"
+            class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 px-5 rounded-md">💡 Show Solution</button>  
+        </div>
+        <div class="flex gap-2">
+          <button type="button" id="runBtn"
+            class="bg-blue-500 hover:bg-blue-400 text-black font-semibold py-2 px-5 rounded-md">▶ Run</button>
+          <button type="submit"
+            class="bg-green-500 hover:bg-green-400 text-black font-semibold py-2 px-5 rounded-md">✅ Submit</button>
+        </div>
+      </div>
+
+    </form>
+
+    <div class="mt-6">
+      <h2 class="text-lg font-semibold text-green-400 mb-1">📤 Output / Feedback</h2>
+      <div id="output"
+        class="bg-black text-green-400 p-4 rounded-md shadow border border-green-600 min-h-[150px] whitespace-pre-wrap overflow-auto">
+        ℹ️ Output or feedback will appear here.
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Monaco Editor -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+  <script>
+    let editor;
+    let currentProblem = "";
+    let currentLevel = document.getElementById("levelSelector").value;
+    let selectedTopic = "";
+
+    document.getElementById("levelSelector").addEventListener("change", () => {
+      currentLevel = document.getElementById("levelSelector").value;
+    });
+
+
+
+
+    require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
+    require(['vs/editor/editor.main'], function () {
+      editor = monaco.editor.create(document.getElementById('editorContainer'), {
+        value: '# Write your solution here\n',
+        language: 'python',
+        theme: 'vs-dark',
+        fontSize: 16,
+        automaticLayout: true,
+        minimap: { enabled: false }
+      });
+
+      monaco.languages.registerCompletionItemProvider('python', {
+        provideCompletionItems: () => {
+          const keywords = [
+            'def', 'return', 'if', 'elif', 'else',
+            'for', 'while', 'import', 'from', 'as',
+            'class', 'try', 'except', 'with', 'pass',
+            'break', 'continue', 'print', 'input', 'len'
+          ];
+
+          const suggestions = keywords.map(keyword => ({
+            label: keyword,
+            kind: monaco.languages.CompletionItemKind.Keyword,
+            insertText: keyword,
+            documentation: `Python keyword: ${keyword}`
+          }));
+
+          return { suggestions };
+        }
+      });
+
+      // Ask topic on load and generate first problem
+      window.addEventListener("load", async () => {
+        selectedTopic = window.prompt("📌 Enter a Python topic (e.g. pandas, recursion, strings):", "pandas") || "";
+        if (selectedTopic) {
+          generateProblem(selectedTopic);
+        }
+      });
+    });
+
+    async function generateProblem(topic) {
+      document.getElementById("output").textContent = "🔄 Generating problem...";
+
+      const response = await fetch("/next-problem", {
+        method: "POST",
+        body: new URLSearchParams({ level: currentLevel, topic: topic }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      });
+
+      const data = await response.json();
+      currentProblem = data.problem;
+      currentLevel = data.level;
+
+      document.getElementById("problemBox").textContent = currentProblem;
+      document.getElementById("levelBadge").textContent = `Level: ${currentLevel}`;
+      document.getElementById("output").textContent = "🧠 Enter your solution and click Submit.";
+      editor.setValue("# Write your solution here\n");
+    }
+    
+    
+    document.getElementById("solutionBtn").addEventListener("click", async () => {
+      if (!currentProblem.trim()) {
+        document.getElementById("output").textContent = "❗ Please generate a problem first.";
+        return;
+      }
+
+      document.getElementById("output").textContent = "💭 Fetching solution...";
+
+      const response = await fetch("/solution", {
+        method: "POST",
+        body: new URLSearchParams({ problem: currentProblem }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      });
+
+      const data = await response.json();
+      document.getElementById("output").textContent = `✅ Suggested Solution:\n\n${data.solution}`;
+    });
+
+
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      if (!selectedTopic) {
+        selectedTopic = window.prompt("📌 Enter topic for the next problem:", "pandas") || "";
+      }
+      generateProblem(selectedTopic);
+    });
+
+    document.getElementById("changeTopicBtn").addEventListener("click", () => {
+      selectedTopic = window.prompt("📝 Enter a new Python topic:", selectedTopic) || selectedTopic;
+      if (selectedTopic.trim()) {
+        generateProblem(selectedTopic.trim());
+      }
+    });
+    
+
+    document.getElementById("codeForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      document.getElementById("output").textContent = "🧠 Evaluating solution...";
+      const response = await fetch("/submit-solution", {
+        method: "POST",
+        body: new URLSearchParams({
+          problem: currentProblem,
+          code: editor.getValue(),
+          level: currentLevel
+        }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      });
+      const result = await response.json();
+      document.getElementById("output").textContent = result.feedback;
+      if (result.correct) {
+        currentLevel = result.next_level;
+        document.getElementById("levelBadge").textContent = `Level: ${currentLevel}`;
+      }
+    });
+
+    document.getElementById("runBtn").addEventListener("click", async () => {
+      document.getElementById("output").textContent = "⚙️ Running code...";
+      const response = await fetch("/run", {
+        method: "POST",
+        body: new URLSearchParams({ code: editor.getValue() }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      });
+      const data = await response.json();
+      document.getElementById("output").textContent = data.output;
+    });
+  </script>
+</body>
+</html>
