@@ -17,7 +17,7 @@ AI_Coding_Solver is a web-based application that generates Python programming pr
 
 ## 📸 Screenshot
 
-> (Insert a screenshot of the interface here if available)
+![AI Coding Solver Screenshot](static/screenshot.png)
 
 ---
 
