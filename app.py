@@ -222,7 +222,7 @@ def run_code():
         output = subprocess.check_output(
             [sys.executable, filename], 
             stderr=subprocess.STDOUT,
-            timeout=5, 
+            timeout=15, 
             universal_newlines=True
         )
     except subprocess.CalledProcessError as e:
