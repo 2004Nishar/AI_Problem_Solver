@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Python Problem Solver</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #editorContainer {
+      height: 300px;
+      border: 1px solid #444;
+      border-radius: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .profile-container {
+      background-color: #2d3748;
+      padding: 20px;
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen font-mono p-6">
+
+<div class="flex justify-center mb-4">
+  <h1 class="text-3xl font-bold text-cyan-400">🤖 AIChallenge Solver</h1>
+</div>
+
+
+
+
+  <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <!-- Main Content -->
+    <div class="lg:col-span-3 space-y-6">
+
+      <!-- Problem Section -->
+      <div class="bg-gray-800 p-4 rounded-lg">
+        <div class="flex justify-between items-center mb-2">
+          <h2 class="text-lg text-indigo-300 font-semibold">📘 Current Problem</h2>
+          <select id="levelSelector" class="text-sm px-2 py-1 rounded focus:outline-none text-black transition-colors duration-300">
+            <option value="basic" class="text-green-500">🟢 Basic</option>
+            <option value="intermediate" class="text-yellow-400">🟡 Intermediate</option>
+            <option value="advanced" class="text-red-500">🔴 Advanced</option>
+          </select>
+        </div>
+        <div id="problemBox" class="text-white whitespace-pre-wrap">Waiting for topic input...</div>
+      </div>
+
+      <!-- Code Editor -->
+      <form id="codeForm" class="bg-gray-800 p-4 rounded-lg shadow">
+        <div id="editorContainer" class="h-[300px] border border-gray-700 rounded mb-4"></div>
+        <div class="flex justify-between flex-wrap gap-2">
+          <div class="flex gap-2">
+            <button type="button" id="nextBtn" class="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold py-2 px-5 rounded-md">🆕 Next Problem</button>
+            <button type="button" id="changeTopicBtn" class="bg-purple-500 hover:bg-purple-400 text-white font-semibold py-2 px-5 rounded-md">🔄 Change Topic</button>
+            <button type="button" id="solutionBtn" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 px-5 rounded-md">💡 Show Solution</button>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" id="runBtn" class="bg-blue-500 hover:bg-blue-400 text-black font-semibold py-2 px-5 rounded-md">▶ Run</button>
+            <button type="submit" class="bg-green-500 hover:bg-green-400 text-black font-semibold py-2 px-5 rounded-md">✅ Submit</button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Output -->
+      <div class="mt-6">
+        <h2 class="text-lg font-semibold text-green-400 mb-1">📤 Output / Feedback</h2>
+        <div id="output" class="bg-black text-green-400 p-4 rounded-md shadow border border-green-600 min-h-[150px] whitespace-pre-wrap overflow-auto">
+          ℹ️ Output or feedback will appear here.
+        </div>
+      </div>
+    </div>
+
+    <!-- Collapsible Profile Sidebar -->
+    <div class="profile-container transition-all duration-300 ease-in-out bg-gray-800 rounded-lg p-4">
+      <button id="toggleProfile" class="w-full text-left font-semibold text-cyan-300 text-lg mb-2">👤 Your Profile</button>
+      <div id="profileDetails" class="space-y-2">
+        <!-- Inside profileDetails div -->
+        <p><strong>Name:</strong> <span id="profileName">{{ name }}</span></p>
+        <p><strong>Email:</strong> <span id="profileEmail">{{ email }}</span></p>
+        <p><strong>API Key:</strong> <span id="profileApiKey">************</span></p>
+        <div class="flex flex-col gap-2">
+          <button id="editProfileBtn" class="bg-purple-500 hover:bg-purple-400 text-white font-semibold py-2 px-5 rounded-md">✏️ Edit Profile</button>
+          <button class="bg-red-600 hover:bg-red-500 text-white font-semibold py-2 px-5 rounded-md" onclick="window.location.href='/logout'">🚪 Logout</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Load Monaco Editor -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+  <script>
+    let editor;
+    let currentProblem = "";
+    let currentLevel = document.getElementById("levelSelector").value;
+    let selectedTopic = "";
+
+    document.getElementById("levelSelector").addEventListener("change", () => {
+      currentLevel = document.getElementById("levelSelector").value;
+    });
+
+    require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
+    require(['vs/editor/editor.main'], function () {
+      editor = monaco.editor.create(document.getElementById('editorContainer'), {
+        value: '# Write your solution here\n',
+        language: 'python',
+        theme: 'vs-dark',
+        fontSize: 16,
+        automaticLayout: true,
+        minimap: { enabled: false }
+      });
+
+      // Ask topic on load and generate first problem
+      window.addEventListener("load", async () => {
+        selectedTopic = window.prompt("📌 Enter a Python topic (e.g. pandas, recursion, strings):", "pandas") || "";
+        if (selectedTopic) {
+          generateProblem(selectedTopic);
+        }
+      });
+    });
+
+    async function generateProblem(topic) {
+      document.getElementById("output").textContent = "🔄 Generating problem...";
+
+      const response = await fetch("/next-problem", {
+        method: "POST",
+        body: new URLSearchParams({ level: currentLevel, topic: topic }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      });
+
+      const data = await response.json();
+      currentProblem = data.problem;
+      currentLevel = data.level;
+
+      document.getElementById("problemBox").textContent = currentProblem;
+      document.getElementById("output").textContent = "🧠 Enter your solution and click Submit.";
+      editor.setValue("# Write your solution here\n");
+    }
+
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      if (!selectedTopic) {
+        selectedTopic = window.prompt("📌 Enter topic for the next problem:", "pandas") || "";
+      }
+      generateProblem(selectedTopic);
+    });
+
+    document.getElementById("changeTopicBtn").addEventListener("click", () => {
+      selectedTopic = window.prompt("📝 Enter a new Python topic:", selectedTopic) || selectedTopic;
+      if (selectedTopic.trim()) {
+        generateProblem(selectedTopic.trim());
+      }
+    });
+
+    document.getElementById("solutionBtn").addEventListener("click", async () => {
+      if (!currentProblem.trim()) {
+        document.getElementById("output").textContent = "❗ Please generate a problem first.";
+        return;
+      }
+
+      document.getElementById("output").textContent = "💭 Fetching solution...";
+
+      const response = await fetch("/solution", {
+        method: "POST",
+        body: new URLSearchParams({ problem: currentProblem }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      });
+
+      const data = await response.json();
+      document.getElementById("output").textContent = `✅ Suggested Solution:\n\n${data.solution}`;
+    });
+
+    document.getElementById("codeForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      document.getElementById("output").textContent = "🧠 Evaluating solution...";
+      const response = await fetch("/submit-solution", {
+        method: "POST",
+        body: new URLSearchParams({
+          problem: currentProblem,
+          code: editor.getValue(),
+          level: currentLevel
+        }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      });
+      const result = await response.json();
+      document.getElementById("output").textContent = result.feedback;
+    });
+
+    document.getElementById("runBtn").addEventListener("click", async () => {
+      document.getElementById("output").textContent = "⚙️ Running code...";
+      const response = await fetch("/run", {
+        method: "POST",
+        body: new URLSearchParams({ code: editor.getValue() }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      });
+      const data = await response.json();
+      document.getElementById("output").textContent = data.output;
+    });
+
+    //
+
+  </script>
+</body>
+</html>

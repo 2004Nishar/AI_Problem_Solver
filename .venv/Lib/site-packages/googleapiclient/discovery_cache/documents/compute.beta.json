@@ -34931,6 +34931,57 @@
 "https://www.googleapis.com/auth/compute",
 "https://www.googleapis.com/auth/compute.readonly"
 ]
+},
+"performMaintenance": {
+"description": "Allows customers to perform maintenance on a reservation subBlock",
+"flatPath": "projects/{project}/zones/{zone}/{parentName}/reservationSubBlocks/{reservationSubBlock}/performMaintenance",
+"httpMethod": "POST",
+"id": "compute.reservationSubBlocks.performMaintenance",
+"parameterOrder": [
+"project",
+"zone",
+"parentName",
+"reservationSubBlock"
+],
+"parameters": {
+"parentName": {
+"description": "The name of the parent reservation and parent block. In the format of reservations/{reservation_name}/reservationBlocks/{reservation_block_name}",
+"location": "path",
+"required": true,
+"type": "string"
+},
+"project": {
+"description": "Project ID for this request.",
+"location": "path",
+"required": true,
+"type": "string"
+},
+"requestId": {
+"description": "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported ( 00000000-0000-0000-0000-000000000000).",
+"location": "query",
+"type": "string"
+},
+"reservationSubBlock": {
+"description": "The name of the reservation subBlock. Name should conform to RFC1035 or be a resource ID.",
+"location": "path",
+"required": true,
+"type": "string"
+},
+"zone": {
+"description": "Name of the zone for this request. Zone name should conform to RFC1035.",
+"location": "path",
+"required": true,
+"type": "string"
+}
+},
+"path": "projects/{project}/zones/{zone}/{parentName}/reservationSubBlocks/{reservationSubBlock}/performMaintenance",
+"response": {
+"$ref": "Operation"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform",
+"https://www.googleapis.com/auth/compute"
+]
 }
 }
 },
@@ -45654,7 +45705,7 @@
 }
 }
 },
-"revision": "20250603",
+"revision": "20250626",
 "rootUrl": "https://compute.googleapis.com/",
 "schemas": {
 "AWSV4Signature": {
@@ -50769,7 +50820,7 @@ false
 "asns": {
 "description": "[Output only] ASNs in the path segment. When type is SEQUENCE, these are ordered.",
 "items": {
-"format": "uint32",
+"format": "int32",
 "type": "integer"
 },
 "type": "array"
@@ -57578,6 +57629,16 @@ false
 "description": "Maintenance Info for ReservationBlocks.",
 "id": "GroupMaintenanceInfo",
 "properties": {
+"instanceMaintenanceOngoingCount": {
+"description": "Describes number of instances that have ongoing maintenance.",
+"format": "int32",
+"type": "integer"
+},
+"instanceMaintenancePendingCount": {
+"description": "Describes number of instances that have pending maintenance.",
+"format": "int32",
+"type": "integer"
+},
 "maintenanceOngoingCount": {
 "description": "Progress for ongoing maintenance for this group of VMs/hosts. Describes number of hosts in the block that have ongoing maintenance.",
 "format": "int32",
@@ -57601,6 +57662,16 @@ false
 "Maintenance is not synchronized for this reservation. Instead, each instance has its own maintenance window."
 ],
 "type": "string"
+},
+"subblockInfraMaintenanceOngoingCount": {
+"description": "Describes number of subblock Infrastructure that has ongoing maintenance. Here, Subblock Infrastructure Maintenance pertains to upstream hardware contained in the Subblock that is necessary for a VM Family(e.g. NVLink Domains). Not all VM Families will support this field.",
+"format": "int32",
+"type": "integer"
+},
+"subblockInfraMaintenancePendingCount": {
+"description": "Describes number of subblock Infrastructure that has pending maintenance. Here, Subblock Infrastructure Maintenance pertains to upstream hardware contained in the Subblock that is necessary for a VM Family (e.g. NVLink Domains). Not all VM Families will support this field.",
+"format": "int32",
+"type": "integer"
 },
 "upcomingGroupMaintenance": {
 "$ref": "UpcomingMaintenance",
@@ -83567,6 +83638,10 @@ false
 "physicalTopology": {
 "$ref": "ReservationSubBlockPhysicalTopology",
 "description": "[Output Only] The physical topology of the reservation subBlock."
+},
+"reservationSubBlockMaintenance": {
+"$ref": "GroupMaintenanceInfo",
+"description": "Maintenance information for this reservation subBlock."
 },
 "selfLink": {
 "description": "[Output Only] Server-defined fully-qualified URL for this resource.",

@@ -50429,7 +50429,7 @@
 }
 }
 },
-"revision": "20250603",
+"revision": "20250626",
 "rootUrl": "https://compute.googleapis.com/",
 "schemas": {
 "AWSV4Signature": {
@@ -55783,7 +55783,7 @@ false
 "asns": {
 "description": "[Output only] ASNs in the path segment. When type is SEQUENCE, these are ordered.",
 "items": {
-"format": "uint32",
+"format": "int32",
 "type": "integer"
 },
 "type": "array"

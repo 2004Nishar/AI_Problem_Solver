@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cyberpunk Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: radial-gradient(ellipse at center, #0d0d0d 0%, #000000 100%);
+      overflow: hidden;
+      color: #00fff7;
+      font-family: 'Courier New', monospace;
+    }
+
+    .matrix-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      width: 100vw;
+      height: 100vh;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 140, 0.1),
+        rgba(0, 255, 140, 0.1) 2px,
+        transparent 2px,
+        transparent 4px
+      );
+      animation: flicker 2s infinite alternate;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.9; }
+      100% { opacity: 1; }
+    }
+
+    .glow-input {
+      background-color: transparent;
+      border: 1px solid #00fff7;
+      color: #00fff7;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      width: 100%;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .glow-input:focus {
+      outline: none;
+      box-shadow: 0 0 10px #00fff7, 0 0 40px #00fff7;
+      background-color: rgba(0, 255, 247, 0.05);
+    }
+
+    .glow-button {
+      background: transparent;
+      border: 1px solid #00fff7;
+      color: #00fff7;
+      padding: 0.75rem;
+      width: 100%;
+      border-radius: 0.5rem;
+      text-transform: uppercase;
+      font-weight: bold;
+      transition: 0.3s ease;
+    }
+
+    .glow-button:hover {
+      background-color: #00fff7;
+      color: #000;
+      box-shadow: 0 0 20px #00fff7, 0 0 60px #00fff7;
+    }
+
+    .title {
+      font-size: 1.8rem;
+      text-shadow: 0 0 5px #00fff7, 0 0 20px #00fff7;
+    }
+
+    .terminal-box {
+      background-color: rgba(0, 255, 140, 0.05);
+      border: 1px solid #00fff7;
+      box-shadow: 0 0 10px #00fff7;
+      padding: 2rem;
+      border-radius: 1rem;
+      backdrop-filter: blur(4px);
+    }
+  </style>
+</head>
+<body>
+
+<div class="matrix-bg"></div>
+
+<div class="flex items-center justify-center min-h-screen px-4">
+  <div class="terminal-box w-full max-w-md">
+    <h2 class="title text-center mb-6">CYBER ACCESS PORTAL</h2>
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label for="email" class="block mb-1">EMAIL</label>
+        <input type="email" id="email" name="email" required class="glow-input" />
+      </div>
+      <div>
+        <label for="password" class="block mb-1">PASSWORD</label>
+        <input type="password" id="password" name="password" required class="glow-input" />
+      </div>
+      <div>
+        <label for="apiKey" class="block mb-1">API KEY</label>
+        <input type="text" id="apiKey" name="apiKey" required class="glow-input" />
+      </div>
+      <button type="submit" class="glow-button mt-4">ENTER SYSTEM</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const apiKey = document.getElementById('apiKey').value;
+
+    console.log('Login Attempt:', { email, password, apiKey });
+    alert("Access granted (simulation).");
+  });
+</script>
+
+</body>
+</html>

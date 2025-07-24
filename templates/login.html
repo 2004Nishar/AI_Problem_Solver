@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NEXUS | Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Manrope', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-[#01041c] to-[#0c001f] text-gray-200 min-h-screen flex items-center justify-center p-5 relative overflow-hidden">
+  <div id="particles-js" class="absolute inset-0 z-0"></div>
+
+  <div class="relative z-10 w-full max-w-md bg-[rgba(10,10,30,0.85)] border border-purple-600/40 rounded-xl p-10 backdrop-blur-md shadow-2xl animate-fade-in">
+    <div class="text-center mb-9">
+      <h1 class="text-2xl font-bold text-gray-200 mb-2 tracking-wide">Access Problem</h1>
+      <p class="font-mono text-sm text-cyan-400">Enter the secure zone</p>
+    </div>
+
+    <form id="loginForm" novalidate>
+      <div class="mb-6">
+        <label for="email" class="block text-xs font-bold uppercase text-gray-400 mb-2 tracking-wider">Email Address</label>
+        <input id="email" type="email" placeholder="you@example.com" required class="w-full p-3 bg-transparent border border-purple-600/40 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-600/30">
+      </div>
+
+      <div class="mb-6">
+        <label for="password" class="block text-xs font-bold uppercase text-gray-400 mb-2 tracking-wider">Password</label>
+        <div class="relative flex items-center">
+          <input id="password" type="password" placeholder="Enter your password" required class="w-full p-3 pr-10 bg-transparent border border-purple-600/40 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-600/30">
+          <button type="button" id="togglePassword" class="absolute right-3 text-gray-400 text-lg">👁️</button>
+        </div>
+      </div>
+
+      <button type="submit" class="w-full py-3 bg-gradient-to-r from-cyan-400 to-purple-600 text-white rounded-lg font-bold uppercase tracking-wider hover:-translate-y-1 hover:shadow-xl transition">Login</button>
+    </form>
+
+    <div id="statusBar" class="mt-6 p-3 bg-black/20 border-l-4 text-center text-sm font-mono text-gray-400 h-11 opacity-0 transition-opacity duration-500"></div>
+
+    <div class="text-center mt-6 text-sm">
+      <p>Don’t have an account? <a href="{{ url_for('register') }}" class="text-cyan-400 font-bold hover:text-purple-400 underline">Register</a></p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS('particles-js', {
+      particles: {
+        number: { value: 60, density: { enable: true, value_area: 800 } },
+        color: { value: "#8a2be2" },
+        shape: { type: "circle" },
+        opacity: { value: 0.5, random: true },
+        size: { value: 2, random: true },
+        line_linked: { enable: true, distance: 150, color: "#00bfff", opacity: 0.2, width: 1 },
+        move: { enable: true, speed: 1, direction: "none", straight: false }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: { enable: true, mode: "repulse" },
+          onclick: { enable: true, mode: "push" }
+        },
+        modes: {
+          repulse: { distance: 100, duration: 0.4 },
+          push: { particles_nb: 4 }
+        }
+      },
+      retina_detect: true
+    });
+
+    const loginForm = document.getElementById('loginForm');
+    const passwordInput = document.getElementById('password');
+    const togglePasswordBtn = document.getElementById('togglePassword');
+    const statusBar = document.getElementById('statusBar');
+
+    togglePasswordBtn.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      togglePasswordBtn.textContent = isPassword ? '🙈' : '👁️';
+    });
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = passwordInput.value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!email || !emailRegex.test(email)) {
+        showStatus('Error: Enter a valid email.', 'error');
+        return;
+      }
+
+      if (password.length < 8) {
+        showStatus('Error: Password must be at least 8 characters.', 'error');
+        return;
+      }
+
+      showStatus('Verifying credentials...', 'loading');
+      loginForm.querySelector('button').disabled = true;
+
+      fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          window.location.href = '/dashboard';
+        } else {
+          alert(data.error || 'Login failed.');
+          loginForm.querySelector('button').disabled = false;
+        }
+      });
+      
+    });
+
+    function showStatus(message, type) {
+      statusBar.textContent = message;
+      statusBar.className = 'mt-6 p-3 border-l-4 text-center text-sm font-mono h-11 opacity-100 transition-opacity duration-500';
+      if (type === 'success') {
+        statusBar.classList.add('border-green-400', 'text-green-400');
+      } else if (type === 'error') {
+        statusBar.classList.add('border-red-500', 'text-red-500');
+      } else {
+        statusBar.classList.add('border-cyan-400', 'text-cyan-300');
+      }
+    }
+  </script>
+</body>
+</html>
