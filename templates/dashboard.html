@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Python Problem Solver</title>
+  <title>NSC AI Problem</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     #editorContainer {
@@ -25,180 +25,244 @@
 <div class="flex justify-center mb-4">
   <h1 class="text-3xl font-bold text-cyan-400">🤖 AIChallenge Solver</h1>
 </div>
+<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
+  <!-- Main Content -->
+  <div class="lg:col-span-3 space-y-6">
 
-
-
-
-  <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
-    <!-- Main Content -->
-    <div class="lg:col-span-3 space-y-6">
-
-      <!-- Problem Section -->
-      <div class="bg-gray-800 p-4 rounded-lg">
-        <div class="flex justify-between items-center mb-2">
-          <h2 class="text-lg text-indigo-300 font-semibold">📘 Current Problem</h2>
-          <select id="levelSelector" class="text-sm px-2 py-1 rounded focus:outline-none text-black transition-colors duration-300">
-            <option value="basic" class="text-green-500">🟢 Basic</option>
-            <option value="intermediate" class="text-yellow-400">🟡 Intermediate</option>
-            <option value="advanced" class="text-red-500">🔴 Advanced</option>
-          </select>
-        </div>
-        <div id="problemBox" class="text-white whitespace-pre-wrap">Waiting for topic input...</div>
+    <!-- Problem Section -->
+    <div class="bg-gray-800 p-4 rounded-lg">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-lg text-indigo-300 font-semibold">📘 Current Problem</h2>
+        <select id="levelSelector" class="text-sm px-2 py-1 rounded focus:outline-none text-black transition-colors duration-300">
+          <option value="basic" class="text-green-500">🟢 Basic</option>
+          <option value="intermediate" class="text-yellow-400">🟡 Intermediate</option>
+          <option value="advanced" class="text-red-500">🔴 Advanced</option>
+        </select>
       </div>
-
-      <!-- Code Editor -->
-      <form id="codeForm" class="bg-gray-800 p-4 rounded-lg shadow">
-        <div id="editorContainer" class="h-[300px] border border-gray-700 rounded mb-4"></div>
-        <div class="flex justify-between flex-wrap gap-2">
-          <div class="flex gap-2">
-            <button type="button" id="nextBtn" class="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold py-2 px-5 rounded-md">🆕 Next Problem</button>
-            <button type="button" id="changeTopicBtn" class="bg-purple-500 hover:bg-purple-400 text-white font-semibold py-2 px-5 rounded-md">🔄 Change Topic</button>
-            <button type="button" id="solutionBtn" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 px-5 rounded-md">💡 Show Solution</button>
-          </div>
-          <div class="flex gap-2">
-            <button type="button" id="runBtn" class="bg-blue-500 hover:bg-blue-400 text-black font-semibold py-2 px-5 rounded-md">▶ Run</button>
-            <button type="submit" class="bg-green-500 hover:bg-green-400 text-black font-semibold py-2 px-5 rounded-md">✅ Submit</button>
-          </div>
-        </div>
-      </form>
-
-      <!-- Output -->
-      <div class="mt-6">
-        <h2 class="text-lg font-semibold text-green-400 mb-1">📤 Output / Feedback</h2>
-        <div id="output" class="bg-black text-green-400 p-4 rounded-md shadow border border-green-600 min-h-[150px] whitespace-pre-wrap overflow-auto">
-          ℹ️ Output or feedback will appear here.
-        </div>
-      </div>
+      <div id="problemBox" class="text-white whitespace-pre-wrap">Waiting for topic input...</div>
     </div>
 
-    <!-- Collapsible Profile Sidebar -->
-    <div class="profile-container transition-all duration-300 ease-in-out bg-gray-800 rounded-lg p-4">
-      <button id="toggleProfile" class="w-full text-left font-semibold text-cyan-300 text-lg mb-2">👤 Your Profile</button>
-      <div id="profileDetails" class="space-y-2">
-        <!-- Inside profileDetails div -->
-        <p><strong>Name:</strong> <span id="profileName">{{ name }}</span></p>
-        <p><strong>Email:</strong> <span id="profileEmail">{{ email }}</span></p>
-        <p><strong>API Key:</strong> <span id="profileApiKey">************</span></p>
-        <div class="flex flex-col gap-2">
-          <button id="editProfileBtn" class="bg-purple-500 hover:bg-purple-400 text-white font-semibold py-2 px-5 rounded-md">✏️ Edit Profile</button>
-          <button class="bg-red-600 hover:bg-red-500 text-white font-semibold py-2 px-5 rounded-md" onclick="window.location.href='/logout'">🚪 Logout</button>
+    <!-- Code Editor -->
+    <form id="codeForm" class="bg-gray-800 p-4 rounded-lg shadow">
+      <div id="editorContainer" class="h-[300px] border border-gray-700 rounded mb-4"></div>
+      <div class="flex justify-between flex-wrap gap-2">
+        <div class="flex gap-2">
+          <button type="button" id="nextBtn" class="bg-yellow-500 hover:bg-yellow-400 text-black font-semibold py-2 px-5 rounded-md">🆕 Next Problem</button>
+          <button type="button" id="changeTopicBtn" class="bg-purple-500 hover:bg-purple-400 text-white font-semibold py-2 px-5 rounded-md">🔄 Change Topic</button>
+          <button type="button" id="solutionBtn" class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-2 px-5 rounded-md">💡 Show Solution</button>
         </div>
+        <div class="flex gap-2">
+          <button type="button" id="runBtn" class="bg-blue-500 hover:bg-blue-400 text-black font-semibold py-2 px-5 rounded-md">▶ Run</button>
+          <button type="submit" class="bg-green-500 hover:bg-green-400 text-black font-semibold py-2 px-5 rounded-md">✅ Submit</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Output -->
+    <div class="mt-6">
+      <h2 class="text-lg font-semibold text-green-400 mb-1">📤 Output / Feedback</h2>
+      <div id="output" class="bg-black text-green-400 p-4 rounded-md shadow border border-green-600 min-h-[150px] whitespace-pre-wrap overflow-auto">
+        ℹ️ Output or feedback will appear here.
       </div>
     </div>
   </div>
 
+  <!-- Profile Sidebar -->
+  <div class="profile-container transition-all duration-300 ease-in-out bg-gray-800 rounded-lg p-4">
+    <button id="toggleProfile" class="w-full text-left font-semibold text-cyan-300 text-lg mb-2">👤 Your Profile</button>
+    <div id="profileDetails" class="space-y-2">
+      <p><strong>Name:</strong> <span id="profileName">{{ name }}</span></p>
+      <p><strong>Email:</strong> <span id="profileEmail">{{ email }}</span></p>
+      <p><strong>API Key:</strong> <span id="profileApiKey">************</span></p>
+      <div class="flex flex-col gap-2">
+        <button id="editProfileBtn" class="bg-purple-500 hover:bg-purple-400 text-white font-semibold py-2 px-5 rounded-md">✏️ Edit Profile</button>
+        <button class="bg-red-600 hover:bg-red-500 text-white font-semibold py-2 px-5 rounded-md" onclick="window.location.href='/logout'">🚪 Logout</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <!-- Load Monaco Editor -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
-  <script>
-    let editor;
-    let currentProblem = "";
-    let currentLevel = document.getElementById("levelSelector").value;
-    let selectedTopic = "";
+<!-- Custom Topic Modal -->
+<div id="topicModal" class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+  <div class="bg-gray-800 border border-cyan-500 rounded-lg p-6 max-w-md w-full shadow-lg text-center">
+    <h2 class="text-xl font-bold text-cyan-400 mb-4">📝 Enter a Python Topic</h2>
+    <input type="text" id="topicInput" class="w-full p-2 rounded bg-gray-900 text-white border border-cyan-400 focus:outline-none focus:ring focus:ring-cyan-500" placeholder="e.g. pandas, strings, recursion" />
+    <div class="flex justify-center gap-4 mt-4">
+      <button onclick="submitTopic()" class="bg-cyan-500 hover:bg-cyan-400 text-black font-semibold py-2 px-4 rounded">✅ Submit</button>
+      <button onclick="closeTopicModal()" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded">❌ Cancel</button>
+    </div>
+  </div>
+</div>
 
-    document.getElementById("levelSelector").addEventListener("change", () => {
-      currentLevel = document.getElementById("levelSelector").value;
+<footer class="mt-12 text-center text-gray-400 border-t border-gray-700 pt-6">
+  <p class="text-sm">
+    Made with 💻 and ☕ by <span class="text-cyan-300 font-semibold">Nishar Chavan</span> |
+    <a href="https://github.com/yourusername/AI_Problem_Solver" target="_blank" class="text-purple-400 hover:underline">GitHub</a>
+  </p>
+  <p class="text-xs mt-2">© 2025 AIChallenge Solver. All rights reserved.</p>
+</footer>
+
+<!-- Load Monaco Editor -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+<script>
+  let editor;
+  let currentProblem = "";
+  let currentLevel = document.getElementById("levelSelector").value;
+  let selectedTopic = "";
+
+  // Load Monaco Editor
+  require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
+  require(['vs/editor/editor.main'], function () {
+    editor = monaco.editor.create(document.getElementById('editorContainer'), {
+      value: '# Write your solution here\n',
+      language: 'python',
+      theme: 'vs-dark',
+      fontSize: 16,
+      automaticLayout: true,
+      minimap: { enabled: false }
+    });
+  });
+
+  // Auto-open modal on page load
+  window.addEventListener("load", () => {
+    openTopicModal("pandas");
+  });
+
+  // Change difficulty level
+  document.getElementById("levelSelector").addEventListener("change", () => {
+    currentLevel = document.getElementById("levelSelector").value;
+  });
+
+  // Next Problem
+  document.getElementById("nextBtn").addEventListener("click", () => {
+    if (!selectedTopic) {
+      openTopicModal("pandas");
+    } else {
+      generateProblem(selectedTopic);
+    }
+  });
+
+  // Change Topic button
+  document.getElementById("changeTopicBtn").addEventListener("click", () => {
+    openTopicModal(selectedTopic);
+  });
+
+  // Get Suggested Solution
+  document.getElementById("solutionBtn").addEventListener("click", async () => {
+    if (!currentProblem.trim()) {
+      document.getElementById("output").textContent = "❗ Please generate a problem first.";
+      return;
+    }
+
+    document.getElementById("output").textContent = "💭 Fetching solution...";
+    const response = await fetch("/solution", {
+      method: "POST",
+      body: new URLSearchParams({ problem: currentProblem }),
+      headers: { "Content-Type": "application/x-www-form-urlencoded" }
+    });
+    const data = await response.json();
+    document.getElementById("output").textContent = `✅ Suggested Solution:\n\n${data.solution}`;
+  });
+
+  // Submit and evaluate user solution
+  document.getElementById("codeForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    document.getElementById("output").textContent = "🧠 Evaluating solution...";
+
+    const response = await fetch("/submit-solution", {
+      method: "POST",
+      body: new URLSearchParams({
+        problem: currentProblem,
+        code: editor.getValue(),
+        level: currentLevel
+      }),
+      headers: { "Content-Type": "application/x-www-form-urlencoded" }
     });
 
-    require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
-    require(['vs/editor/editor.main'], function () {
-      editor = monaco.editor.create(document.getElementById('editorContainer'), {
-        value: '# Write your solution here\n',
-        language: 'python',
-        theme: 'vs-dark',
-        fontSize: 16,
-        automaticLayout: true,
-        minimap: { enabled: false }
-      });
+    const result = await response.json();
+    document.getElementById("output").textContent = result.feedback;
+  });
 
-      // Ask topic on load and generate first problem
-      window.addEventListener("load", async () => {
-        selectedTopic = window.prompt("📌 Enter a Python topic (e.g. pandas, recursion, strings):", "pandas") || "";
-        if (selectedTopic) {
-          generateProblem(selectedTopic);
-        }
-      });
+  // Run user code
+  document.getElementById("runBtn").addEventListener("click", async () => {
+    document.getElementById("output").textContent = "⚙️ Running code...";
+
+    const response = await fetch("/run", {
+      method: "POST",
+      body: new URLSearchParams({ code: editor.getValue() }),
+      headers: { "Content-Type": "application/x-www-form-urlencoded" }
     });
 
-    async function generateProblem(topic) {
-      document.getElementById("output").textContent = "🔄 Generating problem...";
+    const data = await response.json();
+    document.getElementById("output").textContent = data.output;
+  });
 
+  // ======================
+  // Modal Topic Selector
+  // ======================
+
+  function openTopicModal(defaultValue = "") {
+    const modal = document.getElementById("topicModal");
+    const input = document.getElementById("topicInput");
+
+    modal.classList.remove("hidden");
+    input.value = defaultValue || "";
+    input.focus();
+
+    input.removeEventListener("keydown", handleTopicEnter); // Avoid duplicate binding
+    input.addEventListener("keydown", handleTopicEnter);
+  }
+
+  function handleTopicEnter(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      submitTopic();
+    }
+  }
+
+  function closeTopicModal() {
+    const modal = document.getElementById("topicModal");
+    const input = document.getElementById("topicInput");
+
+    modal.classList.add("hidden");
+    input.removeEventListener("keydown", handleTopicEnter);
+  }
+
+  function submitTopic() {
+    const input = document.getElementById("topicInput");
+    const value = input.value.trim();
+
+    if (value) {
+      selectedTopic = value;
+      generateProblem(selectedTopic);
+    }
+
+    closeTopicModal();
+  }
+
+  // ======================
+  // Generate Problem (via backend)
+  // ======================
+
+  async function generateProblem(topic) {
+    document.getElementById("problemBox").textContent = "🔍 Generating problem on: " + topic + "...";
+
+    try {
       const response = await fetch("/next-problem", {
         method: "POST",
-        body: new URLSearchParams({ level: currentLevel, topic: topic }),
+        body: new URLSearchParams({ topic, level: currentLevel }),
         headers: { "Content-Type": "application/x-www-form-urlencoded" }
       });
 
       const data = await response.json();
       currentProblem = data.problem;
-      currentLevel = data.level;
-
       document.getElementById("problemBox").textContent = currentProblem;
-      document.getElementById("output").textContent = "🧠 Enter your solution and click Submit.";
-      editor.setValue("# Write your solution here\n");
+    } catch (err) {
+      document.getElementById("problemBox").textContent = "❌ Failed to fetch problem. Try again.";
+      console.error("Error generating problem:", err);
     }
+  }
+</script>
 
-    document.getElementById("nextBtn").addEventListener("click", () => {
-      if (!selectedTopic) {
-        selectedTopic = window.prompt("📌 Enter topic for the next problem:", "pandas") || "";
-      }
-      generateProblem(selectedTopic);
-    });
-
-    document.getElementById("changeTopicBtn").addEventListener("click", () => {
-      selectedTopic = window.prompt("📝 Enter a new Python topic:", selectedTopic) || selectedTopic;
-      if (selectedTopic.trim()) {
-        generateProblem(selectedTopic.trim());
-      }
-    });
-
-    document.getElementById("solutionBtn").addEventListener("click", async () => {
-      if (!currentProblem.trim()) {
-        document.getElementById("output").textContent = "❗ Please generate a problem first.";
-        return;
-      }
-
-      document.getElementById("output").textContent = "💭 Fetching solution...";
-
-      const response = await fetch("/solution", {
-        method: "POST",
-        body: new URLSearchParams({ problem: currentProblem }),
-        headers: { "Content-Type": "application/x-www-form-urlencoded" }
-      });
-
-      const data = await response.json();
-      document.getElementById("output").textContent = `✅ Suggested Solution:\n\n${data.solution}`;
-    });
-
-    document.getElementById("codeForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      document.getElementById("output").textContent = "🧠 Evaluating solution...";
-      const response = await fetch("/submit-solution", {
-        method: "POST",
-        body: new URLSearchParams({
-          problem: currentProblem,
-          code: editor.getValue(),
-          level: currentLevel
-        }),
-        headers: { "Content-Type": "application/x-www-form-urlencoded" }
-      });
-      const result = await response.json();
-      document.getElementById("output").textContent = result.feedback;
-    });
-
-    document.getElementById("runBtn").addEventListener("click", async () => {
-      document.getElementById("output").textContent = "⚙️ Running code...";
-      const response = await fetch("/run", {
-        method: "POST",
-        body: new URLSearchParams({ code: editor.getValue() }),
-        headers: { "Content-Type": "application/x-www-form-urlencoded" }
-      });
-      const data = await response.json();
-      document.getElementById("output").textContent = data.output;
-    });
-
-    //
-
-  </script>
 </body>
 </html>
